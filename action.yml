@@ -1,0 +1,35 @@
+name: "Install and Connect SNX VPN"
+description: "Installs Check Point SNX client and connects to VPN."
+inputs:
+  snx_user:
+    description: Username for the authentication to the server.
+    required: true
+  snx_pass:
+    description: Password for the user. Client Cert is not supported by this action.
+    required: true
+  snx_server:
+    description: Server to connect to.
+    required: true
+  root_ca_fingerprint:
+    description: Fingerprint phrase of the server certificate. This is optional, if not provided the client will acknowledge any server without checking.
+    required: false
+runs:
+  using: "composite"
+  steps:
+    - name: Install dependencies and SNX
+      shell: bash
+      run: |
+        sudo dpkg --add-architecture i386
+        sudo apt update -qq
+        sudo apt install -qq --no-install-recommends -y libx11-6:i386 libstdc++5:i386 libpam0g:i386 lib32readline8 expect
+        sudo installer/snx_install_linux30.sh
+
+    - name: Connect to SNX VPN
+      shell: bash
+      run: |
+        expect ./connect_snx.exp
+      env:
+        SNX_USER: ${{ inputs.snx_user }}
+        SNX_PASS: ${{ inputs.snx_pass }}
+        SNX_SERVER: ${{ inputs.snx_server }}
+        ROOT_CA_FINGERPRINT: ${{ inputs.root_ca_fingerprint }}

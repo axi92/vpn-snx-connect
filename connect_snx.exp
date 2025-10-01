@@ -1,0 +1,20 @@
+log_user 1
+set timeout 10
+spawn snx -s $::env(SNX_SERVER) -u $::env(SNX_USER)
+expect "Please enter your password:"
+send -- "$::env(SNX_PASS)\r"
+
+if { [info exists ::env(ROOT_CA_FINGERPRINT)] && $::env(ROOT_CA_FINGERPRINT] != "" } {
+    expect {
+        -re "Root CA fingerprint: $::env(ROOT_CA_FINGERPRINT].*Do you accept\\? \\[y\\]es/\\[N\\]o:" { send -- "y\r" }
+        -re "Root CA fingerprint: $::env(ROOT_CA_FINGERPRINT]" { exp_continue }
+        "Do you accept? \\[y\\]es/\\[N\\]o:" { send -- "y\r" }
+        timeout { puts "❌ ERROR: Expected fingerprint not received"; exit 1 }
+        eof { puts "❌ ERROR: SNX exited unexpectedly"; exit 1 }
+    }
+} else {
+    expect "Do you accept? \\[y\\]es/\\[N\\]o:"
+    send -- "y\r"
+}
+
+expect "SNX - connected."
