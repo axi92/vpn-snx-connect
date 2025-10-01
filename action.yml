@@ -19,6 +19,7 @@ runs:
     - name: Install dependencies and SNX
       shell: bash
       run: |
+        sha256sum installer/snx_install_linux30.sh.sha256 -c
         sudo dpkg --add-architecture i386
         sudo apt update -qq
         sudo apt install -qq --no-install-recommends -y libx11-6:i386 libstdc++5:i386 libpam0g:i386 lib32readline8 expect
