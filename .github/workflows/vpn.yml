@@ -17,5 +17,5 @@ jobs:
           root_ca_fingerprint: ${{ secrets.SNX_FINGERPRINT }}
       - name: Verify vpn
         run: |
-          curl --fail --silent --show-error -L https://nexus.evva.link/ -o /dev/null
+          curl --fail --silent --show-error -L https://vault.service.consul:8200/ui/ -o /dev/null
           echo "VPN working!"
