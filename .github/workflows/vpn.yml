@@ -1,0 +1,21 @@
+name: VPN
+on: 
+  workflow_dispatch:
+
+jobs:
+  setup_vpn:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    name: Test VPN
+    steps:
+      - uses: axi92/vpn-snx-connect@main
+        with:
+          snx_user: ${{ secrets.SNX_USER }}
+          snx_pass: ${{ secrets.SNX_PASS }}
+          snx_server: ${{ secrets.SNX_SERVER }}
+          root_ca_fingerprint: ${{ secrets.SNX_FINGERPRINT }}
+      - name: Verify vpn
+        run: |
+          curl --fail --silent --show-error -L https://nexus.evva.link/ -o /dev/null
+          echo "VPN working!"
