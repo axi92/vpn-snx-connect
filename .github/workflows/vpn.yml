@@ -18,5 +18,6 @@ jobs:
       - name: Verify vpn
         run: |
           cat /etc/hosts
-          curl --fail --silent --show-error -L https://vault.service.consul:8200/ui/ -o /dev/null
+          echo quit | openssl s_client -showcerts -servername vault.service.consul -connect vault.service.consul:8200 > cacert.pem
+          curl --cacert cacert.pem --fail --silent --show-error -L https://vault.service.consul:8200/ui/ -o /dev/null
           echo "VPN working!"
