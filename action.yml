@@ -43,6 +43,7 @@ runs:
       shell: bash
       run: |
         expect ./connect_snx.exp
+        sleep 1
         echo 'Expect script done'
         OFFICE_IP=$(grep "Office Mode IP" /tmp/snx_output.log | awk -F': ' '{print $2}')
         DNS_SERVER=$(grep "DNS Server" /tmp/snx_output.log | awk -F': ' '{print $2}')
@@ -55,6 +56,7 @@ runs:
         echo "dns_server=${DNS_SERVER}" >> $GITHUB_OUTPUT
         echo "dns_suffix=${DNS_SUFFIX}" >> $GITHUB_OUTPUT
         echo "timeout=${TIMEOUT}" >> $GITHUB_OUTPUT
+        ping -c 1 $DNS_SERVER
         echo 'all Done should exit'
       env:
         SNX_USER: ${{ inputs.snx_user }}
