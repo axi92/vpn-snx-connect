@@ -1,20 +1,28 @@
-log_user 1
+# log_user 1
+# exp_internal 1
 set timeout 10
+
 spawn snx -s $::env(SNX_SERVER) -u $::env(SNX_USER)
 expect "Please enter your password:"
 send -- "$::env(SNX_PASS)\r"
 
-if { [info exists ::env(ROOT_CA_FINGERPRINT)] && $::env(ROOT_CA_FINGERPRINT] != "" } {
-    expect {
-        -re "Root CA fingerprint: $::env(ROOT_CA_FINGERPRINT].*Do you accept\\? \\[y\\]es/\\[N\\]o:" { send -- "y\r" }
-        -re "Root CA fingerprint: $::env(ROOT_CA_FINGERPRINT]" { exp_continue }
-        "Do you accept? \\[y\\]es/\\[N\\]o:" { send -- "y\r" }
-        timeout { puts "❌ ERROR: Expected fingerprint not received"; exit 1 }
-        eof { puts "❌ ERROR: SNX exited unexpectedly"; exit 1 }
-    }
-} else {
-    expect "Do you accept? \\[y\\]es/\\[N\\]o:"
-    send -- "y\r"
+puts "ROOT_CA_FINGERPRINT exists? [info exists ::env(ROOT_CA_FINGERPRINT)]"
+if {[info exists ::env(ROOT_CA_FINGERPRINT)]} {
+    puts "Value: '$::env(ROOT_CA_FINGERPRINT)'"
 }
 
-expect "SNX - connected."
+if {[info exists ::env(ROOT_CA_FINGERPRINT)] && [string length $::env(ROOT_CA_FINGERPRINT)] > 0} {
+    set fingerprint $::env(ROOT_CA_FINGERPRINT)
+    puts "ROOT_CA_FINGERPRINT is set, expecting fingerprint prompt..."
+    expect "Root CA fingerprint: $fingerprint"
+    send -- "y\r"
+} else {
+    puts "ROOT_CA_FINGERPRINT not set or empty, expecting generic accept prompt..."
+}
+
+expect {
+  "Office Mode IP" {}
+  timeout { puts "Pattern not found! (Timeout)"; exit 1 }
+  eof { puts "Pattern not found (EOF)!"; exit 1 }
+}
+puts "SNX connection completed successfully."
