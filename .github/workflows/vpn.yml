@@ -17,5 +17,6 @@ jobs:
           root_ca_fingerprint: ${{ secrets.SNX_FINGERPRINT }}
       - name: Verify vpn
         run: |
+          cat /etc/resolv.conf
           curl --fail --silent --show-error -L https://vault.service.consul:8200/ui/ -o /dev/null
           echo "VPN working!"

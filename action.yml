@@ -43,6 +43,7 @@ runs:
       shell: bash
       run: |
         expect ./connect_snx.exp
+        echo 'Expect script done'
         OFFICE_IP=$(grep "Office Mode IP" /tmp/snx_output.log | awk -F': ' '{print $2}')
         DNS_SERVER=$(grep "DNS Server" /tmp/snx_output.log | awk -F': ' '{print $2}')
         DNS_SUFFIX=$(grep "DNS Suffix" /tmp/snx_output.log | awk -F': ' '{print $2}')
