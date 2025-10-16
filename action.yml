@@ -42,7 +42,7 @@ runs:
       id: connect_snx
       shell: bash
       run: |
-        expect ./connect_snx.exp
+        sudo expect ./connect_snx.exp
         sleep 5 # wait to be sure all routes are set and vpn is ready
         route
         OFFICE_IP=$(grep "Office Mode IP" /tmp/snx_output.log | awk -F': ' '{print $2}' | tr -d '\r\n')
