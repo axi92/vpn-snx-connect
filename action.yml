@@ -45,15 +45,15 @@ runs:
         expect ./connect_snx.exp
         sleep 1 # wait to be sure all routes are set and vpn is ready
         #route
-        OFFICE_IP=$(grep "Office Mode IP" /tmp/snx_output.log | awk -F': ' '{print $2}')
-        DNS_SERVER=$(grep "DNS Server" /tmp/snx_output.log | awk -F': ' '{print $2}')
-        DNS_SUFFIX=$(grep "DNS Suffix" /tmp/snx_output.log | awk -F': ' '{print $2}')
-        TIMEOUT=$(grep "Timeout" /tmp/snx_output.log | awk -F': ' '{print $2}')
+        OFFICE_IP=$(grep "Office Mode IP" /tmp/snx_output.log | awk -F': ' '{print $2}' | tr -d '\r\n')
+        DNS_SERVER=$(grep "DNS Server" /tmp/snx_output.log | awk -F': ' '{print $2}' | tr -d '\r\n')
+        DNS_SUFFIX=$(grep "DNS Suffix" /tmp/snx_output.log | awk -F': ' '{print $2}' | tr -d '\r\n')
+        TIMEOUT=$(grep "Timeout" /tmp/snx_output.log | awk -F': ' '{print $2}' | tr -d '\r\n')
         echo "office_ip=${OFFICE_IP}" >> $GITHUB_OUTPUT
         echo "dns_server=${DNS_SERVER}" >> $GITHUB_OUTPUT
         echo "dns_suffix=${DNS_SUFFIX}" >> $GITHUB_OUTPUT
         echo "timeout=${TIMEOUT}" >> $GITHUB_OUTPUT
-        echo $DNS_SERVER
+        echo ">$DNS_SERVER<"
         cat $GITHUB_OUTPUT
         ping -c 1 "$DNS_SERVER"
       env:
