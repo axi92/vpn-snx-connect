@@ -4,7 +4,7 @@ set timeout 10
 # Log all output to a file
 log_file "/tmp/snx_output.log"
 
-spawn ./mock-snx.sh -s $::env(SNX_SERVER) -u $::env(SNX_USER)
+spawn snx -s $::env(SNX_SERVER) -u $::env(SNX_USER)
 expect "Please enter your password:"
 send -- "$::env(SNX_PASS)\r"
 
