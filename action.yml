@@ -53,6 +53,8 @@ runs:
         echo "dns_server=${DNS_SERVER}" >> $GITHUB_OUTPUT
         echo "dns_suffix=${DNS_SUFFIX}" >> $GITHUB_OUTPUT
         echo "timeout=${TIMEOUT}" >> $GITHUB_OUTPUT
+        echo $DNS_SERVER
+        cat $GITHUB_OUTPUT
         ping -c 1 "$DNS_SERVER"
       env:
         SNX_USER: ${{ inputs.snx_user }}
