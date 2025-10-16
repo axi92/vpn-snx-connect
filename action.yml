@@ -35,8 +35,8 @@ runs:
       run: |
         sha256sum installer/snx_install_linux30.sh.sha256 -c
         sudo dpkg --add-architecture i386
-        sudo apt update -qq
-        sudo apt install -qq --no-install-recommends -y libx11-6:i386 libstdc++5:i386 libpam0g:i386 lib32readline8 expect
+        sudo apt-get update -qq
+        sudo apt-get install -qq --no-install-recommends --no-upgrade -y libx11-6:i386 libstdc++5:i386 libpam0g:i386 lib32readline8 expect
         sudo installer/snx_install_linux30.sh
     - name: Connect to SNX VPN
       id: connect_snx
