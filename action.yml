@@ -13,6 +13,19 @@ inputs:
   root_ca_fingerprint:
     description: Fingerprint phrase of the server certificate. This is optional, if not provided the client will acknowledge any server without checking.
     required: false
+outputs:
+  office_ip:
+    value: ${{ steps.connect_snx.outputs.office_ip }}
+    description: "The Office Mode IP assigned by the SNX VPN."
+  dns_server:
+    value: ${{ steps.connect_snx.outputs.dns_server }}
+    description: "The DNS server provided by SNX VPN."
+  dns_suffix:
+    value: ${{ steps.connect_snx.outputs.dns_suffix }}
+    description: "The DNS suffix provided by SNX VPN."
+  timeout:
+    value: ${{ steps.connect_snx.outputs.timeout }}
+    description: "The session timeout of the VPN."
 runs:
   using: "composite"
   steps:
@@ -25,11 +38,20 @@ runs:
         sudo apt update -qq
         sudo apt install -qq --no-install-recommends -y libx11-6:i386 libstdc++5:i386 libpam0g:i386 lib32readline8 expect
         sudo installer/snx_install_linux30.sh
-
     - name: Connect to SNX VPN
+      id: connect_snx
       shell: bash
       run: |
         expect ./connect_snx.exp
+        OFFICE_IP=$(grep "Office Mode IP" /tmp/snx_output.log | awk -F': ' '{print $2}')
+        DNS_SERVER=$(grep "DNS Server" /tmp/snx_output.log | awk -F': ' '{print $2}')
+        DNS_SUFFIX=$(grep "DNS Suffix" /tmp/snx_output.log | awk -F': ' '{print $2}')
+        TIMEOUT=$(grep "Timeout" /tmp/snx_output.log | awk -F': ' '{print $2}')
+        sudo bash -c "echo 'nameserver $DNS_SERVER' > /etc/resolv.conf"
+        echo "office_ip=${OFFICE_IP}" >> $GITHUB_OUTPUT
+        echo "dns_server=${DNS_SERVER}" >> $GITHUB_OUTPUT
+        echo "dns_suffix=${DNS_SUFFIX}" >> $GITHUB_OUTPUT
+        echo "timeout=${TIMEOUT}" >> $GITHUB_OUTPUT
       env:
         SNX_USER: ${{ inputs.snx_user }}
         SNX_PASS: ${{ inputs.snx_pass }}

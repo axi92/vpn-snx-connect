@@ -1,28 +1,35 @@
 # log_user 1
 # exp_internal 1
 set timeout 10
+# Log all output to a file
+log_file "/tmp/snx_output.log"
 
-spawn snx -s $::env(SNX_SERVER) -u $::env(SNX_USER)
+spawn ./mock-snx.sh -s $::env(SNX_SERVER) -u $::env(SNX_USER)
 expect "Please enter your password:"
 send -- "$::env(SNX_PASS)\r"
 
-puts "ROOT_CA_FINGERPRINT exists? [info exists ::env(ROOT_CA_FINGERPRINT)]"
+# puts "ROOT_CA_FINGERPRINT exists? [info exists ::env(ROOT_CA_FINGERPRINT)]"
 if {[info exists ::env(ROOT_CA_FINGERPRINT)]} {
-    puts "Value: '$::env(ROOT_CA_FINGERPRINT)'"
+    # puts "Value: '$::env(ROOT_CA_FINGERPRINT)'"
 }
 
 if {[info exists ::env(ROOT_CA_FINGERPRINT)] && [string length $::env(ROOT_CA_FINGERPRINT)] > 0} {
     set fingerprint $::env(ROOT_CA_FINGERPRINT)
-    puts "ROOT_CA_FINGERPRINT is set, expecting fingerprint prompt..."
+    # puts "ROOT_CA_FINGERPRINT is set, expecting fingerprint prompt..."
     expect "Root CA fingerprint: $fingerprint"
     send -- "y\r"
 } else {
-    puts "ROOT_CA_FINGERPRINT not set or empty, expecting generic accept prompt..."
+    # puts "ROOT_CA_FINGERPRINT not set or empty, expecting generic accept prompt..."
 }
 
 expect {
-  "Office Mode IP" {}
+  "Session parameters" {}
   timeout { puts "Pattern not found! (Timeout)"; exit 1 }
   eof { puts "Pattern not found (EOF)!"; exit 1 }
 }
-puts "SNX connection completed successfully."
+
+# Wait until the process finishes
+expect eof
+
+# Stop logging
+log_file
