@@ -17,6 +17,9 @@ jobs:
           root_ca_fingerprint: ${{ secrets.SNX_FINGERPRINT }}
       - name: Verify vpn
         run: |
+          # sudo bash -c "echo 'nameserver $DNS_SERVER' > /etc/resolv.conf"
+          sudo bash -c "echo '172.16.2.21 consul.service.consul' >> /etc/hosts"
+          sudo bash -c "echo '172.16.2.24 vault.service.consul' >> /etc/hosts"
           cat /etc/hosts
           echo quit | openssl s_client -showcerts -servername vault.service.consul -connect vault.service.consul:8200 > cacert.pem
           curl --cacert cacert.pem --fail --silent --show-error -L https://vault.service.consul:8200/ui/ -o /dev/null

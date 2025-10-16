@@ -43,22 +43,17 @@ runs:
       shell: bash
       run: |
         expect ./connect_snx.exp
-        sleep 1
-        echo 'Expect script done'
-        route
+        sleep 1 # wait to be sure all routes are set and vpn is ready
+        #route
         OFFICE_IP=$(grep "Office Mode IP" /tmp/snx_output.log | awk -F': ' '{print $2}')
         DNS_SERVER=$(grep "DNS Server" /tmp/snx_output.log | awk -F': ' '{print $2}')
         DNS_SUFFIX=$(grep "DNS Suffix" /tmp/snx_output.log | awk -F': ' '{print $2}')
         TIMEOUT=$(grep "Timeout" /tmp/snx_output.log | awk -F': ' '{print $2}')
-        # sudo bash -c "echo 'nameserver $DNS_SERVER' > /etc/resolv.conf"
-        sudo bash -c "echo '172.16.2.21 consul.service.consul' >> /etc/hosts"
-        sudo bash -c "echo '172.16.2.24 vault.service.consul' >> /etc/hosts"
         echo "office_ip=${OFFICE_IP}" >> $GITHUB_OUTPUT
         echo "dns_server=${DNS_SERVER}" >> $GITHUB_OUTPUT
         echo "dns_suffix=${DNS_SUFFIX}" >> $GITHUB_OUTPUT
         echo "timeout=${TIMEOUT}" >> $GITHUB_OUTPUT
-        ping -c 1 172.16.0.2
-        echo 'all Done should exit'
+        ping -c 1 "$DNS_SERVER"
       env:
         SNX_USER: ${{ inputs.snx_user }}
         SNX_PASS: ${{ inputs.snx_pass }}
